@@ -12,6 +12,8 @@
 package onedimensionautomata;
 
 import java.awt.Point;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
 
@@ -24,6 +26,16 @@ public class Window extends javax.swing.JFrame {
     /** Creates new form Window */
     public Window() {
         initComponents();
+        final WorldConnectionMatrix wcm = new WorldConnectionMatrix(10);
+        connectTab.setData(wcm.getData());
+        connectTab.addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point click = connectTab.rowCol;
+                wcm.toggleConnection(click.y, click.x);
+                connectTab.repaint();
+            }
+        });
     }
 
     /** This method is called from within the constructor to
@@ -46,6 +58,7 @@ public class Window extends javax.swing.JFrame {
         worldView1 = new onedimensionautomata.WorldView();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        connectTab = new onedimensionautomata.WorldView();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -100,6 +113,7 @@ public class Window extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable1);
 
         jTabbedPane1.addTab("Count Table", jScrollPane2);
+        jTabbedPane1.addTab("Connections", connectTab);
 
         getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
 
@@ -158,6 +172,7 @@ public class Window extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private onedimensionautomata.WorldView connectTab;
     private javax.swing.JSpinner generation;
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;

@@ -15,9 +15,15 @@ package onedimensionautomata;
  */
 public interface WorldInterface1D {
 
-    /** Returns array of states associated with this "world". */
+    /** 
+     * Returns array of states associated with this "world". 
+     */
     public int[] getStates();
 
-    /** Returns maximum state. */
+    /** 
+     * Returns index of the maximum state, e.g. if there are two
+     * options for the state it should return 1. If there are n options,
+     * should return n-1.
+     */
     public int getMaxState();
 }
