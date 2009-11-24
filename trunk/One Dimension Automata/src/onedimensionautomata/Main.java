@@ -30,10 +30,10 @@ public class Main {
 
     public static ArrayList<World> run(World newworld, int generations, RuleInterface rules) {
         int size = newworld.worldSize;
-        int state = newworld.state;
+        int state = newworld.nstates;
         ArrayList<World> history = new ArrayList<World>();
         World oldworld;
-        int[] neighbors = new int[state + 1];
+        int[] neighborStates = new int[state + 1];
 
         for (int k = 1; k <= generations; k++) {
             System.out.println(newworld);
@@ -42,10 +42,10 @@ public class Main {
             oldworld = history.get(history.size() - 1);
 
             for (int i = 0; i < newworld.getWorldSize(); i++) {
-                neighbors = oldworld.getNeighbors(i, state);
+                neighborStates = oldworld.getNeighborStates(i, state);
                 //System.out.print(neighbors[0]);
                 //System.out.print(rules.applyRules(oldworld.getWorld()[i],neighbors));
-                newworld.setWorldValue(i, rules.applyRules(neighbors));
+                newworld.setWorldValue(i, rules.applyRules(neighborStates));
             }
 
         }

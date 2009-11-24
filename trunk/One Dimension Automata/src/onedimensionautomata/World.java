@@ -4,7 +4,9 @@
  */
 package onedimensionautomata;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -14,12 +16,12 @@ public class World implements WorldInterface1D {
 
     int[] world;
     public int worldSize;
-    int state;
+    int nstates;
 
     public World(int size, int state) {
         world = new int[size];
         setWorldSize(size);
-        this.state=state;
+        this.nstates=state;
     }
 
     public int[] getWorld() {
@@ -53,56 +55,32 @@ public class World implements WorldInterface1D {
      * @return array... first entry is location state; remaining 1 through n
      *   are state counts of each of these states
      */
-    public int[] getNeighbors(int worldLocation, int state) {
-        int[] neighbor;
-        neighbor = new int[state+1];
-        for (int i=0; i<=state; i++){
-            neighbor[i]=0;
-        }
 
-        if (worldLocation == 0){
-            neighbor[0] = world[worldLocation];
-            for ( int i = 0; i<state; i++)
-            {
-                if (world[worldLocation+1]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-                if (world[worldSize-1]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-            }
-            return neighbor;
-        } else if (worldLocation == worldSize-1){
-            neighbor[0] = world[worldLocation];
-            for ( int i = 0; i<state; i++)
-            {
-                if (world[worldLocation-1]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-                if (world[0]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-            }
-            return neighbor;
-        } else
-        {
-                        neighbor[0] = world[worldLocation];
-            for ( int i = 0; i<state; i++)
-            {
-                if (world[worldLocation-1]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-                if (world[worldLocation+1]==i){
-                    neighbor[i+1]= neighbor[i+1]+1;
-                }
-            }
-        return neighbor;
-        }
+    public List<Integer> getNeighbors(int worldLocation){
+        List<Integer> list = new ArrayList<Integer>();
+        list.add((worldLocation+1)%world.length);
+        list.add((worldLocation+world.length-1)%world.length);
+        return list;
     }
-    Integer[] countStates(){
-        Integer [] stateCount = new Integer[state];
+
+    public int[] getNeighborStates(int worldLocation, int nstates) {
+        int[] neighborStates;
+        neighborStates = new int[nstates + 1];
+        for (int i = 0; i <= nstates; i++) {
+            neighborStates[i] = 0;
+        }
+        neighborStates[0] = world[worldLocation];
+        for (Integer i : getNeighbors(worldLocation)) {
+            int state = world[i];
+            neighborStates[state + 1] = neighborStates[state + 1] + 1;
+        }
+        return neighborStates;
+    }
+
+    Integer[] countStates() {
+        Integer[] stateCount = new Integer[nstates];
         Arrays.fill(stateCount, 0);
-        for (int i = 0; i<worldSize; i++){
+        for (int i = 0; i < worldSize; i++) {
             stateCount[world[i]]++;
         }
         return stateCount;
@@ -119,7 +97,7 @@ public class World implements WorldInterface1D {
     }
 
     public int getMaxState() {
-        return state;
+        return nstates;
     }
 
 
