@@ -102,9 +102,9 @@ public class Window extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         worldView1 = new onedimensionautomata.WorldView();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        adjacencyMatrix = new onedimensionautomata.WorldView();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        adjacencyMatrix = new onedimensionautomata.WorldView();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("1D Cellular Automata");
@@ -189,14 +189,6 @@ public class Window extends javax.swing.JFrame {
 
         jSplitPane1.setLeftComponent(jScrollPane1);
 
-        adjacencyMatrix.setPreferredSize(new java.awt.Dimension(200, 200));
-        adjacencyMatrix.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                adjacencyMatrixMouseClicked(evt);
-            }
-        });
-        jTabbedPane1.addTab("Topology / Adjacency Matrix", adjacencyMatrix);
-
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -211,6 +203,14 @@ public class Window extends javax.swing.JFrame {
         jScrollPane2.setViewportView(jTable1);
 
         jTabbedPane1.addTab("State Count Table", jScrollPane2);
+
+        adjacencyMatrix.setPreferredSize(new java.awt.Dimension(200, 200));
+        adjacencyMatrix.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                adjacencyMatrixMouseClicked(evt);
+            }
+        });
+        jTabbedPane1.addTab("Topology / Adjacency Matrix", adjacencyMatrix);
 
         jSplitPane1.setRightComponent(jTabbedPane1);
 
