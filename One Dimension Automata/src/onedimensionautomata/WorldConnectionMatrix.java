@@ -2,7 +2,6 @@
  * WorldConnectionMatrix.java
  * Created on Nov 22, 2009
  */
-
 package onedimensionautomata;
 
 import java.util.AbstractList;
@@ -20,6 +19,16 @@ public class WorldConnectionMatrix {
 
     public WorldConnectionMatrix(int n) {
         connection = new int[n][n];
+    }
+
+    public WorldConnectionMatrix(WorldInterface1D world) {
+        int n = world.getWorldSize();
+        connection = new int[n][n];
+        for (int i = 0; i < n; i++) {
+            for (Integer j : world.getNeighbors(i)) {
+                connection[i][j] = 1;
+            }
+        }
     }
 
     /** Toggles state associated with the ith row and jth column */
@@ -44,11 +53,12 @@ public class WorldConnectionMatrix {
 
     /** Returns list of interfaces as a representation of the data describing the connections. */
     public List<? extends WorldInterface1D> getData() {
-        return new AbstractList<WorldConnect>(){
+        return new AbstractList<WorldConnect>() {
             @Override
             public WorldConnect get(int index) {
                 return new WorldConnect(index);
             }
+
             @Override
             public int size() {
                 return connection.length;
@@ -58,16 +68,27 @@ public class WorldConnectionMatrix {
 
     /** Class used to access a row of the connection matrix, as a WorldInterface1D */
     public class WorldConnect implements WorldInterface1D {
+
         int index;
+
         private WorldConnect(int index) {
             this.index = index;
         }
+
         public int[] getStates() {
             return connection[index];
         }
+
         public int getMaxState() {
             return 1;
         }
-    }
 
+        public List<Integer> getNeighbors(int worldLocation) {
+            return java.util.Collections.EMPTY_LIST;
+        }
+
+        public int getWorldSize() {
+            return connection.length;
+        }
+    }
 }

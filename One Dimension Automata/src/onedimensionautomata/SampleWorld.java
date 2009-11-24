@@ -2,6 +2,7 @@ package onedimensionautomata;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
@@ -67,5 +68,13 @@ public class SampleWorld implements WorldInterface1D {
 
     public int getMaxState() {
         return max;
+    }
+
+    public List<Integer> getNeighbors(int worldLocation) {
+        return java.util.Collections.EMPTY_LIST;
+    }
+
+    public int getWorldSize() {
+    return n;
     }
 }

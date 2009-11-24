@@ -26,13 +26,15 @@ public class Window extends javax.swing.JFrame {
     /** Creates new form Window */
     public Window() {
         initComponents();
-        final WorldConnectionMatrix wcm = new WorldConnectionMatrix(10);
+        jButton1ActionPerformed(null);
+        final WorldConnectionMatrix wcm = new WorldConnectionMatrix(worldView1.getData().get(0));
         connectTab.setData(wcm.getData());
         connectTab.addMouseListener(new MouseAdapter(){
             @Override
             public void mouseClicked(MouseEvent e) {
                 Point click = connectTab.rowCol;
                 wcm.toggleConnection(click.y, click.x);
+                ((World)worldView1.getData().get(0)).topology = wcm;
                 connectTab.repaint();
             }
         });

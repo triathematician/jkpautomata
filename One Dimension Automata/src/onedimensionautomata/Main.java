@@ -40,6 +40,7 @@ public class Main {
             history.add(newworld);
             newworld = new World(size, state);
             oldworld = history.get(history.size() - 1);
+            newworld.topology = oldworld.topology;
 
             for (int i = 0; i < newworld.getWorldSize(); i++) {
                 neighborStates = oldworld.getNeighborStates(i, state);

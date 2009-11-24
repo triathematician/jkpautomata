@@ -17,6 +17,7 @@ public class World implements WorldInterface1D {
     int[] world;
     public int worldSize;
     int nstates;
+    WorldConnectionMatrix topology = null;
 
     public World(int size, int state) {
         world = new int[size];
@@ -57,10 +58,14 @@ public class World implements WorldInterface1D {
      */
 
     public List<Integer> getNeighbors(int worldLocation){
-        List<Integer> list = new ArrayList<Integer>();
-        list.add((worldLocation+1)%world.length);
-        list.add((worldLocation+world.length-1)%world.length);
-        return list;
+        if (topology == null) {
+            List<Integer> list = new ArrayList<Integer>();
+            list.add((worldLocation+1)%world.length);
+            list.add((worldLocation+world.length-1)%world.length);
+            return list;
+        } else {
+            return topology.getNeighbors(worldLocation);
+        }
     }
 
     public int[] getNeighborStates(int worldLocation, int nstates) {
