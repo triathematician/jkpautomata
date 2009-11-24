@@ -125,7 +125,7 @@ public class Window extends javax.swing.JFrame {
         int g = (Integer) generation.getValue();
         ArrayList<World> history = Main.runSimulation(g, s, new Rules());
         worldView1.setData(history);
-        Integer[][] countHistory = new Integer[g][history.get(0).state];
+        Integer[][] countHistory = new Integer[g][history.get(0).nstates];
         for (int i = 0; i < g; i++) {
             countHistory[i] = history.get(i).countStates();
         }
@@ -149,7 +149,7 @@ public class Window extends javax.swing.JFrame {
             ArrayList<World> history = Main.run(w, g, new Rules());
             System.out.println(history.size());
             worldView1.setData(history);
-            Integer[][] countHistory = new Integer[g][w.state];
+            Integer[][] countHistory = new Integer[g][w.nstates];
             for (int i = 0; i < g; i++) {
                 countHistory[i] = history.get(i).countStates();
             }
