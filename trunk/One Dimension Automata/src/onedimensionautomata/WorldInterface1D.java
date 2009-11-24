@@ -1,5 +1,7 @@
 package onedimensionautomata;
 
+import java.util.List;
+
 /**
  * WorldInterface1D.java
  * Created on Oct 1, 2009
@@ -26,4 +28,11 @@ public interface WorldInterface1D {
      * should return n-1.
      */
     public int getMaxState();
+
+    public int getWorldSize();
+
+    /**
+     * Returns list describing neighbors
+     */
+    List<Integer> getNeighbors(int worldLocation);
 }
