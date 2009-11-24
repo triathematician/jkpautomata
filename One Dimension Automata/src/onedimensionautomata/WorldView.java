@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
@@ -44,6 +46,9 @@ public class WorldView extends JPanel implements MouseInputListener, Scrollable 
     /** Stores the data being represented. */
     private List<? extends WorldInterface1D> data;
 
+    /** Stores the palette used for coloring. */
+    StatePalette palette = StatePalette.DEFAULT;
+
     //
     //
     // CONSTRUCTORS
@@ -60,6 +65,17 @@ public class WorldView extends JPanel implements MouseInputListener, Scrollable 
         this.data = data;
         addMouseListener(this);
         addMouseMotionListener(this);
+        addComponentListener(new ComponentListener(){
+            public void componentResized(ComponentEvent e) {
+                updateDimensions();
+            }
+            public void componentMoved(ComponentEvent e) {
+            }
+            public void componentShown(ComponentEvent e) {
+            }
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
 
     //
@@ -77,7 +93,8 @@ public class WorldView extends JPanel implements MouseInputListener, Scrollable 
     public void setData(List<? extends WorldInterface1D> data) {
         this.data = data;
         gens = data.size();
-        repaint();
+        n = data.get(0).getStates().length;
+        updateDimensions();
     }
 
     //
@@ -92,40 +109,27 @@ public class WorldView extends JPanel implements MouseInputListener, Scrollable 
      * @param state the state as an integer of value 0 or larger
      * @return Color associated with the state
      */
-    public Color getColorForState(int state) {
-        switch (state) {
-            case 0:
-                return Color.WHITE;
-            case 1:
-                return Color.BLACK;
-            case 2:
-                return Color.BLUE;
-            case 3:
-                return Color.RED;
-            case 4:
-                return Color.GREEN;
-            default:
-                return Color.GRAY;
-        }
-    }
 
     transient float sqSize = 1f;
+
+    /** Updates size of display */
+    void updateDimensions() {
+        sqSize = ((float) getBounds().getWidth() - margin) / n - margin;
+        setPreferredSize(new Dimension((int) getBounds().getWidth(), (int) (gens * (margin + sqSize) + margin)));
+        setSize(new Dimension((int) getBounds().getWidth(), (int) (gens * (margin + sqSize) + margin)));
+    }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
-        n = data.get(0).getStates().length;
-        gens = data.size();
-        sqSize = ((float) getBounds().getWidth() - margin) / n - margin;
-        setPreferredSize(new Dimension((int) getBounds().getWidth(), (int) (gens * (margin + sqSize) + margin)));
         Rectangle2D.Float rect = new Rectangle2D.Float(0, 0, sqSize, sqSize);
         for (int i = 0; i < n; i++) {
             rect.x = margin + i * (sqSize + margin);
             for (int j = 0; j < gens; j++) {
                 int state = data.get(j).getStates()[i];
                 rect.y = margin + j * (sqSize + margin);
-                g2.setColor(getColorForState(state));
+                g2.setColor(palette.getColorForState(state));
                 g2.fill(rect);
                 if (rowCol != null && rowCol.x == i && rowCol.y == j) {
                     if (pressed) {

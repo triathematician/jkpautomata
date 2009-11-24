@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * This class stores the topology of a world in matrix form.
  *
  * @author Elisha Peterson
  */
@@ -31,12 +32,18 @@ public class WorldConnectionMatrix {
         }
     }
 
-    /** Toggles state associated with the ith row and jth column */
-    public void toggleConnection(int i, int j) {
+    /** 
+     * Toggles state associated with the ith row and jth column.
+     * @param symmetric if true, toggles both the i-j connection and the j-i connection
+     */
+    public void toggleConnection(int i, int j, boolean symmetric) {
         if (connection[i][j] != 0) {
             connection[i][j] = 0;
         } else {
             connection[i][j] = 1;
+        }
+        if (symmetric) {
+            connection[j][i] = connection[i][j];
         }
     }
 

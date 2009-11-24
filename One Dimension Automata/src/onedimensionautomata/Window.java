@@ -8,13 +8,11 @@
  *
  * Created on Oct 1, 2009, 11:21:40 AM
  */
-
 package onedimensionautomata;
 
 import java.awt.Point;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -23,21 +21,60 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Window extends javax.swing.JFrame {
 
+    /** This stores the initial world used for the simulation. */
+    World initialWorld;
+    /** Stores the history of the simulation. */
+    ArrayList<World> history;
+    /** Rules used in this game. */
+    RuleInterface RULES = new Rules();
+
+    /**
+     * This initializes the initial world, with the default topology. Randomizes
+     * the initial states. Also resets the topology view.
+     */
+    void initialize_world_and_reset_topology() {
+        int s = (Integer) sizeSpinner.getValue();
+        initialWorld = new World(s, 4);
+        Main.randomizeWorld(initialWorld);
+        initialWorld.topology = new WorldConnectionMatrix(initialWorld);
+        adjacencyMatrix.setData(initialWorld.topology.getData());
+    }
+
+    /**
+     * Uses the current world to set up and run the simulation, and updates
+     * the resulting displays.
+     */
+    void run_simulation_and_update_display() {
+        // run the simulation
+        int g = (Integer) generationSpinner.getValue();
+        history = Main.run(initialWorld, g, RULES);
+
+        // update main vis window
+        int nstates = initialWorld.nstates;
+        worldView1.setData(history);
+
+        // update table with counts
+        Integer[][] countHistory = new Integer[g][nstates];
+        for (int i = 0; i < g; i++) {
+            countHistory[i] = history.get(i).countStates();
+        }
+        String[] colNames = new String[nstates];
+        for (int i = 0; i < colNames.length; i++) {
+            colNames[i] = "State " + i;
+        }
+        jTable1.setModel(new DefaultTableModel(countHistory, colNames));
+
+        // draw the updated results
+        repaint();
+    }
+
     /** Creates new form Window */
     public Window() {
         initComponents();
-        jButton1ActionPerformed(null);
-        final WorldConnectionMatrix wcm = new WorldConnectionMatrix(worldView1.getData().get(0));
-        connectTab.setData(wcm.getData());
-        connectTab.addMouseListener(new MouseAdapter(){
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                Point click = connectTab.rowCol;
-                wcm.toggleConnection(click.y, click.x);
-                ((World)worldView1.getData().get(0)).topology = wcm;
-                connectTab.repaint();
-            }
-        });
+        paletteCombo.setModel(new DefaultComboBoxModel(StatePalette.values()));
+
+        initialize_world_and_reset_topology();
+        run_simulation_and_update_display();
     }
 
     /** This method is called from within the constructor to
@@ -50,48 +87,99 @@ public class Window extends javax.swing.JFrame {
     private void initComponents() {
 
         jToolBar1 = new javax.swing.JToolBar();
-        jButton1 = new javax.swing.JButton();
-        generation = new javax.swing.JSpinner();
+        resetButton = new javax.swing.JButton();
+        randomizeButton = new javax.swing.JButton();
+        generationSpinner = new javax.swing.JSpinner();
         jLabel1 = new javax.swing.JLabel();
-        size = new javax.swing.JSpinner();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        sizeSpinner = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
-        jTabbedPane1 = new javax.swing.JTabbedPane();
+        jSeparator2 = new javax.swing.JToolBar.Separator();
+        symmetricCheckBox = new javax.swing.JCheckBox();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        paletteCombo = new javax.swing.JComboBox();
+        jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
         worldView1 = new onedimensionautomata.WorldView();
+        jTabbedPane1 = new javax.swing.JTabbedPane();
+        adjacencyMatrix = new onedimensionautomata.WorldView();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        connectTab = new onedimensionautomata.WorldView();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("1D Cellular Automata");
 
         jToolBar1.setRollover(true);
         jToolBar1.setMaximumSize(new java.awt.Dimension(65655, 23));
 
-        jButton1.setText("Start");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        resetButton.setText("Reset");
+        resetButton.setFocusable(false);
+        resetButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        resetButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        resetButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                resetButtonActionPerformed(evt);
             }
         });
-        jToolBar1.add(jButton1);
+        jToolBar1.add(resetButton);
 
-        generation.setValue(5);
-        jToolBar1.add(generation);
+        randomizeButton.setText("Randomize");
+        randomizeButton.setFocusable(false);
+        randomizeButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        randomizeButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        randomizeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                randomizeButtonActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(randomizeButton);
+
+        generationSpinner.setValue(5);
+        generationSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                generationSpinnerStateChanged(evt);
+            }
+        });
+        jToolBar1.add(generationSpinner);
 
         jLabel1.setText("Generations");
         jToolBar1.add(jLabel1);
+        jToolBar1.add(jSeparator1);
 
-        size.setValue(20);
-        jToolBar1.add(size);
+        sizeSpinner.setValue(20);
+        sizeSpinner.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                sizeSpinnerStateChanged(evt);
+            }
+        });
+        jToolBar1.add(sizeSpinner);
 
         jLabel2.setText("Size");
         jToolBar1.add(jLabel2);
+        jToolBar1.add(jSeparator2);
+
+        symmetricCheckBox.setSelected(true);
+        symmetricCheckBox.setText("Symmetric");
+        symmetricCheckBox.setFocusable(false);
+        symmetricCheckBox.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+        symmetricCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(symmetricCheckBox);
+        jToolBar1.add(jSeparator3);
+
+        paletteCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        paletteCombo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                paletteComboActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(paletteCombo);
 
         getContentPane().add(jToolBar1, java.awt.BorderLayout.PAGE_START);
 
+        jSplitPane1.setDividerLocation(400);
+        jSplitPane1.setResizeWeight(0.75);
+
+        worldView1.setPreferredSize(new java.awt.Dimension(300, 300));
         worldView1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 worldView1MouseClicked(evt);
@@ -99,7 +187,15 @@ public class Window extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(worldView1);
 
-        jTabbedPane1.addTab("Graphic", jScrollPane1);
+        jSplitPane1.setLeftComponent(jScrollPane1);
+
+        adjacencyMatrix.setPreferredSize(new java.awt.Dimension(200, 200));
+        adjacencyMatrix.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                adjacencyMatrixMouseClicked(evt);
+            }
+        });
+        jTabbedPane1.addTab("Topology / Adjacency Matrix", adjacencyMatrix);
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -114,78 +210,88 @@ public class Window extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(jTable1);
 
-        jTabbedPane1.addTab("Count Table", jScrollPane2);
-        jTabbedPane1.addTab("Connections", connectTab);
+        jTabbedPane1.addTab("State Count Table", jScrollPane2);
 
-        getContentPane().add(jTabbedPane1, java.awt.BorderLayout.CENTER);
+        jSplitPane1.setRightComponent(jTabbedPane1);
+
+        getContentPane().add(jSplitPane1, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        int s = (Integer) size.getValue();
-        int g = (Integer) generation.getValue();
-        ArrayList<World> history = Main.runSimulation(g, s, new Rules());
-        worldView1.setData(history);
-        Integer[][] countHistory = new Integer[g][history.get(0).nstates];
-        for (int i = 0; i < g; i++) {
-            countHistory[i] = history.get(i).countStates();
-        }
-        Integer[] colNames = {1, 2, 3, 4};
-        jTable1.setModel(new DefaultTableModel(countHistory, colNames));
-
-
-    //jTextArea1.getDocument().
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void resetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetButtonActionPerformed
+        initialize_world_and_reset_topology();
+        run_simulation_and_update_display();
+    }//GEN-LAST:event_resetButtonActionPerformed
 
     private void worldView1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_worldView1MouseClicked
         Point click = worldView1.rowCol;
-        int g = (Integer) generation.getValue();
-        //System.out.println(click);
         if (click.y == 0) {
-            World w = (World) worldView1.getData().get(0);
-            w.setWorldValue(
-                    click.x,
-                    (w.getWorld()[click.x] + 1) % w.getMaxState());
-            // set initial condition in main, and run
-            ArrayList<World> history = Main.run(w, g, new Rules());
-            System.out.println(history.size());
-            worldView1.setData(history);
-            Integer[][] countHistory = new Integer[g][w.nstates];
-            for (int i = 0; i < g; i++) {
-                countHistory[i] = history.get(i).countStates();
-            }
-            Integer[] colNames = {1, 2, 3, 4};
-            jTable1.setModel(new DefaultTableModel(countHistory,colNames));
-            repaint();
-        // copy counts to table
+            // cycles state at specified location in initial world
+            initialWorld.setWorldValue(click.x,
+                    (initialWorld.getWorld()[click.x] + 1) % initialWorld.nstates);
+            run_simulation_and_update_display();
         }
     }//GEN-LAST:event_worldView1MouseClicked
 
+    private void adjacencyMatrixMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_adjacencyMatrixMouseClicked
+        // called when the adjacency matrix visualization is clicked
+        Point click = adjacencyMatrix.rowCol;
+        boolean symmetric = symmetricCheckBox.isSelected();
+        initialWorld.topology.toggleConnection(click.y, click.x, symmetric);
+        adjacencyMatrix.repaint();
+        run_simulation_and_update_display();
+    }//GEN-LAST:event_adjacencyMatrixMouseClicked
+
+    private void randomizeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_randomizeButtonActionPerformed
+        Main.randomizeWorld(initialWorld);
+        run_simulation_and_update_display();
+    }//GEN-LAST:event_randomizeButtonActionPerformed
+
+    private void generationSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_generationSpinnerStateChanged
+        run_simulation_and_update_display();
+    }//GEN-LAST:event_generationSpinnerStateChanged
+
+    private void sizeSpinnerStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_sizeSpinnerStateChanged
+        initialize_world_and_reset_topology();
+        run_simulation_and_update_display();
+    }//GEN-LAST:event_sizeSpinnerStateChanged
+
+    private void paletteComboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_paletteComboActionPerformed
+        worldView1.palette = StatePalette.valueOf(paletteCombo.getSelectedItem().toString());
+        repaint();
+    }//GEN-LAST:event_paletteComboActionPerformed
+
     /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {   
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
+
             public void run() {
                 new Window().setVisible(true);
             }
         });
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private onedimensionautomata.WorldView connectTab;
-    private javax.swing.JSpinner generation;
-    private javax.swing.JButton jButton1;
+    private onedimensionautomata.WorldView adjacencyMatrix;
+    private javax.swing.JSpinner generationSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JToolBar.Separator jSeparator1;
+    private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JSplitPane jSplitPane1;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JToolBar jToolBar1;
-    private javax.swing.JSpinner size;
+    private javax.swing.JComboBox paletteCombo;
+    private javax.swing.JButton randomizeButton;
+    private javax.swing.JButton resetButton;
+    private javax.swing.JSpinner sizeSpinner;
+    private javax.swing.JCheckBox symmetricCheckBox;
     private onedimensionautomata.WorldView worldView1;
     // End of variables declaration//GEN-END:variables
-
 }
