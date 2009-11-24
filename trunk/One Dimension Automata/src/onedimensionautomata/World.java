@@ -19,10 +19,10 @@ public class World implements WorldInterface1D {
     int nstates;
     WorldConnectionMatrix topology = null;
 
-    public World(int size, int state) {
+    public World(int size, int nstates) {
         world = new int[size];
         setWorldSize(size);
-        this.nstates=state;
+        this.nstates=nstates;
     }
 
     public int[] getWorld() {

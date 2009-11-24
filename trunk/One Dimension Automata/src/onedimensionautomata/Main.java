@@ -5,27 +5,25 @@
 package onedimensionautomata;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
+ * This class runs a 1d-automata simulation.
  *
- * @author x00875
+ * @author Steve Kinney
  */
 public class Main {
 
     public static void main(String[] args) {
-        runSimulation(6, 20, new Rules());
+        World w = new World(6, 20);
+        randomizeWorld(w);
+        run(w, 6, new Rules());
     }
 
-    public static ArrayList<World> runSimulation(int generations, int size, RuleInterface rules) {
-        int state = 4;
-        World newworld = new World(size, state);
-
-        for (int i = 0; i < newworld.getWorldSize(); i++) {
-            newworld.setWorldValue(i, (int) Math.round((state - 1) * Math.random()));
+    public static void randomizeWorld(World world) {
+        // randomize states
+        for (int i = 0; i < world.getWorldSize(); i++) {
+            world.setWorldValue(i, (int) Math.round((world.nstates - 1) * Math.random()));
         }
-
-        return run(newworld, generations, rules);
     }
 
     public static ArrayList<World> run(World newworld, int generations, RuleInterface rules) {
