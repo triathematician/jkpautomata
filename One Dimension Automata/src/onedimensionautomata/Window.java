@@ -26,7 +26,7 @@ public class Window extends javax.swing.JFrame {
     /** Stores the history of the simulation. */
     ArrayList<World> history;
     /** Rules used in this game. */
-    RuleInterface RULES = new Rules();
+    RuleInterface RULES = Rules.RULE1;
 
     /**
      * This initializes the initial world, with the default topology. Randomizes
@@ -72,6 +72,7 @@ public class Window extends javax.swing.JFrame {
     public Window() {
         initComponents();
         paletteCombo.setModel(new DefaultComboBoxModel(StatePalette.values()));
+        rulesComboBox.setModel(new DefaultComboBoxModel(Rules.values()));
 
         initialize_world_and_reset_topology();
         run_simulation_and_update_display();
@@ -97,6 +98,7 @@ public class Window extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JToolBar.Separator();
         symmetricCheckBox = new javax.swing.JCheckBox();
         jSeparator3 = new javax.swing.JToolBar.Separator();
+        rulesComboBox = new javax.swing.JComboBox();
         paletteCombo = new javax.swing.JComboBox();
         jSplitPane1 = new javax.swing.JSplitPane();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -165,6 +167,14 @@ public class Window extends javax.swing.JFrame {
         symmetricCheckBox.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(symmetricCheckBox);
         jToolBar1.add(jSeparator3);
+
+        rulesComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        rulesComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rulesComboBoxActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(rulesComboBox);
 
         paletteCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         paletteCombo.addActionListener(new java.awt.event.ActionListener() {
@@ -262,6 +272,11 @@ public class Window extends javax.swing.JFrame {
         repaint();
     }//GEN-LAST:event_paletteComboActionPerformed
 
+    private void rulesComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rulesComboBoxActionPerformed
+        this.RULES = Rules.valueOf(rulesComboBox.getSelectedItem().toString());
+        this.run_simulation_and_update_display();
+}//GEN-LAST:event_rulesComboBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -290,6 +305,7 @@ public class Window extends javax.swing.JFrame {
     private javax.swing.JComboBox paletteCombo;
     private javax.swing.JButton randomizeButton;
     private javax.swing.JButton resetButton;
+    private javax.swing.JComboBox rulesComboBox;
     private javax.swing.JSpinner sizeSpinner;
     private javax.swing.JCheckBox symmetricCheckBox;
     private onedimensionautomata.WorldView worldView1;
