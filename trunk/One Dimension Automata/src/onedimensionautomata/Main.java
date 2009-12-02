@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
         World w = new World(6, 20);
         randomizeWorld(w);
-        run(w, 6, new Rules());
+        run(w, 6, Rules.RULE1);
     }
 
     public static void randomizeWorld(World world) {
