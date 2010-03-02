@@ -26,7 +26,7 @@ public class Window extends javax.swing.JFrame {
     /** Stores the history of the simulation. */
     ArrayList<World> history;
     /** Rules used in this game. */
-    RuleInterface RULES = Rules.RULE1;
+    RuleInterface RULES = Rules.SIS;
 
     /**
      * This initializes the initial world, with the default topology. Randomizes

@@ -25,10 +25,18 @@ public class WorldConnectionMatrix {
     public WorldConnectionMatrix(WorldInterface1D world) {
         int n = world.getWorldSize();
         connection = new int[n][n];
-        for (int i = 0; i < n; i++) {
-            for (Integer j : world.getNeighbors(i)) {
-                connection[i][j] = 1;
-            }
+      //  for (int i = 0; i < n; i++) {
+      //      for (Integer j : world.getNeighbors(i)) {
+     //           connection[i][j] = 1;
+    //        }
+      //  }
+
+        for (int i = 0; i < (0.02*n*n); i++)
+        {
+        int eye = (int) Math.round(Math.random()*(n-1));
+        int jay = (int) Math.round(Math.random()*(n-1));
+           connection[eye][jay] = 1;
+            connection[jay][eye] = 1;
         }
     }
 
