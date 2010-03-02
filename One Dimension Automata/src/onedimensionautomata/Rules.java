@@ -10,7 +10,7 @@ package onedimensionautomata;
  */
 public enum Rules implements RuleInterface {
 
-    RULE1() {
+    SIS() {
 
         public int applyRules(int[] neighborStates) {
             int rsltState = 10;
@@ -20,17 +20,52 @@ public enum Rules implements RuleInterface {
             return rsltState;
         }
     },
-    RULE2() {
+
+        INFO() {
 
         public int applyRules(int[] neighborStates) {
             int rsltState = 10;
             if (neighborStates[0] == 0 && neighborStates[2] > 0) {
                 rsltState = 1;
-            } else if (neighborStates[0] == 1) {
-                rsltState = 2;
-            } else if (neighborStates[0] == 2) {
-                rsltState = 2;
             }
+            else if (neighborStates[0] == 1) {
+                rsltState = 1;
+            }
+            return rsltState;
+        }
+    },
+
+            TandR() {
+
+        public int applyRules(int[] neighborStates) {
+            int rsltState = neighborStates[0];
+    if (neighborStates[0] == 0 && neighborStates[2] > 0 && Math.random() < (0.35)) {
+    rsltState = 1;
+    }
+    else if (neighborStates[0] == 1 && Math.random() < (0.5)) {
+    rsltState = 0;
+    }
+            return rsltState;
+        }
+    },
+
+    SIR() {
+
+        public int applyRules(int[] neighborStates) {
+int rsltState = 10;
+    if (neighborStates[0] == 0 && ( neighborStates[2] > 0 || neighborStates[3] > 0) ) {
+    rsltState = 1;
+    }
+    else if (neighborStates[0] == 1) {
+    rsltState = 2;
+    }
+    else if (neighborStates[0] == 2) {
+    rsltState = 3;
+    }
+    else if (neighborStates[0] == 3) {
+        rsltState = 3;
+    }
+    
             return rsltState;
         }
     };
@@ -41,17 +76,11 @@ public enum Rules implements RuleInterface {
     // public Rules() {
     // }
     /** Random
-     *             int rsltState = 10;
-    if (neighborStates[0] == 0 && neighborStates[2] > 0 && Math.random() < 0.5) {
-    rsltState = 1;
-    }
-    else if (neighborStates[0] == 1 && Math.random() < 0.7) {
-    rsltState = 0;
-    }
+     *             
      */
     /** SIR
      *             int rsltState = 10;
-    if (neighborStates[0] == 0 && neighborStates[2] > 0) {
+    if (neighborStates[0] == 0 && ( neighborStates[2] > 0 || neighborStates[3] > 0 ) ) {
     rsltState = 1;
     }
     else if (neighborStates[0] == 1) {

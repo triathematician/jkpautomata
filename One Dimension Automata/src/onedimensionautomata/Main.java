@@ -16,14 +16,14 @@ public class Main {
     public static void main(String[] args) {
         World w = new World(6, 20);
         randomizeWorld(w);
-        run(w, 6, Rules.RULE1);
+        run(w, 6, Rules.SIS);
     }
 
     public static void randomizeWorld(World world) {
         // randomize states
-        for (int i = 0; i < world.getWorldSize(); i++) {
-            world.setWorldValue(i, (int) Math.round((world.nstates - 1) * Math.random()));
-        }
+       // for (int i = 0; i < world.getWorldSize(); i++) {
+        //    world.setWorldValue(i, (int) Math.round(( 1) * Math.random()));
+      //  }
     }
 
     public static ArrayList<World> run(World newworld, int generations, RuleInterface rules) {
