@@ -1,0 +1,1 @@
+This is a collection of Java tools for studying cellular automata.
